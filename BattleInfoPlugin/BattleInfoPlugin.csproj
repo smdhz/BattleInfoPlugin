@@ -101,6 +101,7 @@
       <HintPath>..\packages\Rx-Linq.2.2.4\lib\net45\System.Reactive.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity">
       <HintPath>..\packages\MetroRadiance.1.0.16\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>False</Private>
@@ -118,9 +119,13 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AirSupremacy.cs" />
     <Compile Include="Models\BattleData.cs" />
     <Compile Include="Models\BattleEndNotifier.cs" />
+    <Compile Include="Models\BattleSituation.cs" />
+    <Compile Include="Models\EnemyDataProvider.cs" />
     <Compile Include="Models\FleetDamages.cs" />
+    <Compile Include="Models\Formation.cs" />
     <Compile Include="Models\Raw\battle_midnight_battle.cs" />
     <Compile Include="Models\Raw\battle_midnight_sp_midnight.cs" />
     <Compile Include="Models\Raw\combined_battle_airbattle.cs" />
@@ -130,13 +135,16 @@
     <Compile Include="Models\Raw\combined_battle_sp_midnight.cs" />
     <Compile Include="Models\Raw\CommonTypeExtensions.cs" />
     <Compile Include="Models\Raw\CommonTypes.cs" />
+    <Compile Include="Models\Raw\map_start_next.cs" />
     <Compile Include="Models\Raw\practice_battle.cs" />
     <Compile Include="Models\Raw\practice_midnight_battle.cs" />
+    <Compile Include="Models\Raw\sortie_airbattle.cs" />
     <Compile Include="Models\Raw\sortie_battle.cs" />
     <Compile Include="Models\ShipData.cs" />
     <Compile Include="ViewModels\FleetViewModel.cs" />
     <Compile Include="ViewModels\ToolViewModel.cs" />
     <Compile Include="Views\Converters\AddDoubleValueConverter.cs" />
+    <Compile Include="Views\Converters\AdditionalNameColorConverter.cs" />
     <Compile Include="Views\Fleet.xaml.cs">
       <DependentUpon>Fleet.xaml</DependentUpon>
     </Compile>

@@ -15,17 +15,65 @@ namespace BattleInfoPlugin.Models
 
         public string Name
         {
-            get { return this.ShipSource != null ? this.ShipSource.Info.Name : this.EnemyInfo.Name; }
+            get
+            {
+                return this.ShipSource != null
+                    ? this.ShipSource.Info.Name
+                    : this.EnemyInfo != null
+                        ? this.EnemyInfo.Name
+                        : "？？？";
+            }
+        }
+
+        public string AdditionalName
+        {
+            get
+            {
+                if (this.EnemyInfo == null) return "";
+                var isEnemyID = 500 < this.EnemyInfo.Id && this.EnemyInfo.Id < 901;
+                return isEnemyID ? BattleInfoPlugin.RawStart2.api_mst_ship.Single(x => x.api_id == this.EnemyInfo.Id).api_yomi : "";
+            }
         }
 
         public string TypeName
         {
-            get { return this.ShipSource != null ? this.ShipSource.Info.ShipType.Name : this.EnemyInfo.ShipType.Name; }
+            get
+            {
+                return this.ShipSource != null
+                    ? this.ShipSource.Info.ShipType.Name
+                    : this.EnemyInfo != null
+                        ? this.EnemyInfo.ShipType.Name
+                        : "？？？";
+            }
         }
 
         public ShipSituation Situation
         {
             get { return this.ShipSource != null ? this.ShipSource.Situation : ShipSituation.None; }
+        }
+
+        public int SourceMaxHP
+        {
+            get
+            {
+                return this.ShipSource != null
+                    ? this.ShipSource.HP.Maximum
+                    : this.EnemyInfo != null
+                        ? this.EnemyInfo.HP
+                        : 0;
+            }
+        }
+
+        public int SourceNowHP
+        {
+            get
+            {
+                return this.ShipSource != null
+                    ? this.ShipSource.HP.Current
+                    : this.EnemyInfo != null
+                        ? this.EnemyInfo.HP
+                        : 0;
+            }
         }
 
         #region MaxHP変更通知プロパティ

@@ -21,6 +21,27 @@ namespace BattleInfoPlugin.ViewModels
             }
         }
 
+        public string BattleSituation
+        {
+            get
+            {
+                return this.Data != null && this.Data.BattleSituation != Models.BattleSituation.なし
+                    ? this.Data.BattleSituation.ToString()
+                    : "";
+            }
+        }
+
+        public string FriendAirSupremacy
+        {
+            get
+            {
+                return this.Data != null && this.Data.FriendAirSupremacy != AirSupremacy.航空戦なし
+                    ? this.Data.FriendAirSupremacy.ToString()
+                    : "";
+            }
+        }
+
+
         #region FirstFleet変更通知プロパティ
         private FleetViewModel _FirstFleet;
 
@@ -94,6 +115,10 @@ namespace BattleInfoPlugin.ViewModels
 
         public ToolViewModel(BattleData data, BattleEndNotifier notifier)
         {
+            this.FirstFleet = new FleetViewModel("自艦隊");
+            this.SecondFleet = new FleetViewModel("護衛艦隊");
+            this.Enemies = new FleetViewModel("敵艦隊");
+
             this.notifier = notifier;
 
             this.Data = data;
@@ -105,16 +130,32 @@ namespace BattleInfoPlugin.ViewModels
                     (_, __) => this.RaisePropertyChanged(() => this.UpdatedTime)
                 },
                 {
+                    () => this.Data.BattleSituation,
+                    (_, __) => this.RaisePropertyChanged(() => this.BattleSituation)
+                },
+                {
+                    () => this.Data.FriendAirSupremacy,
+                    (_, __) => this.RaisePropertyChanged(() => this.FriendAirSupremacy)
+                },
+                {
                     () => this.Data.FirstFleet,
-                    (_, __) => this.FirstFleet = new FleetViewModel("自艦隊", this.Data.FirstFleet)
+                    (_, __) => this.FirstFleet.Fleet = this.Data.FirstFleet
                 },
                 {
                     () => this.Data.SecondFleet,
-                    (_, __) => this.SecondFleet = new FleetViewModel("護衛艦隊", this.Data.SecondFleet)
+                    (_, __) => this.SecondFleet.Fleet = this.Data.SecondFleet
                 },
                 {
                     () => this.Data.Enemies,
-                    (_, __) => this.Enemies = new FleetViewModel("敵艦隊", this.Data.Enemies)
+                    (_, __) => this.Enemies.Fleet = this.Data.Enemies
+                },
+                {
+                    () => this.Data.FriendFormation,
+                    (_, __) => this.FirstFleet.FormationSource = this.Data.FriendFormation
+                },
+                {
+                    () => this.Data.NextEnemyFormation,
+                    (_, __) => this.Enemies.FormationSource = this.Data.NextEnemyFormation
                 },
             });
         }
