@@ -176,6 +176,7 @@ namespace BattleInfoPlugin.Models
         }
         #endregion
 
+        private int CurrentDeckId { get; set; }
 
         private readonly EnemyDataProvider provider = new EnemyDataProvider();
 
@@ -236,8 +237,6 @@ namespace BattleInfoPlugin.Models
             this.FirstFleet.CalcDamages(data.api_hougeki.GetFriendDamages());
 
             this.Enemies.CalcDamages(data.api_hougeki.GetEnemyDamages());
-
-            this.FriendAirSupremacy = AirSupremacy.航空戦なし;
         }
 
         public void Update(battle_midnight_sp_midnight data)
@@ -361,8 +360,6 @@ namespace BattleInfoPlugin.Models
             this.SecondFleet.CalcDamages(data.api_hougeki.GetFriendDamages());
 
             this.Enemies.CalcDamages(data.api_hougeki.GetEnemyDamages());
-
-            this.FriendAirSupremacy = AirSupremacy.航空戦なし;
         }
 
         public void Update(combined_battle_sp_midnight data)
@@ -418,8 +415,6 @@ namespace BattleInfoPlugin.Models
             this.FirstFleet.CalcDamages(data.api_hougeki.GetFriendDamages());
 
             this.Enemies.CalcDamages(data.api_hougeki.GetEnemyDamages());
-
-            this.FriendAirSupremacy = AirSupremacy.航空戦なし;
         }
 
         private void Update(sortie_airbattle data)
@@ -488,9 +483,10 @@ namespace BattleInfoPlugin.Models
             this.Enemies = this.provider.GetNextEnemies(startNext);
             this.Enemies.UpdateHPBySource();
 
-            if (api_deck_id == null) return;
+            if (api_deck_id != null) this.CurrentDeckId = int.Parse(api_deck_id);
+            if (this.CurrentDeckId < 1) return;
 
-            this.UpdateFriendFleets(int.Parse(api_deck_id));
+            this.UpdateFriendFleets(this.CurrentDeckId);
             this.FirstFleet.UpdateHPBySource();
             this.SecondFleet.UpdateHPBySource();
         }
@@ -515,6 +511,8 @@ namespace BattleInfoPlugin.Models
 
             var master = KanColleClient.Current.Master.Ships;
             this.Enemies = api_ship_ke.Where(x => x != -1).Select(x => new ShipData(master[x])).ToArray();
+
+            this.CurrentDeckId = api_deck_id;
         }
 
         private void UpdateFriendFleets(int deckID)
