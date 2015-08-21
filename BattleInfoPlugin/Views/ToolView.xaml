@@ -8,6 +8,8 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:l="http://schemas.livet-mvvm.net/2011/wpf"
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             Background="{DynamicResource ThemeBrushKey}"
+             Foreground="{DynamicResource ActiveForegroundBrushKey}"
              mc:Ignorable="d" 
              d:DesignHeight="350"
              d:DesignWidth="640"
@@ -18,8 +20,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/PluginStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:AddDoubleValueConverter x:Key="WidthConverter" Value="-16"/>
-            <converters:AddDoubleValueConverter x:Key="HeightConverter" Value="-8"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -32,16 +32,10 @@
         </l:InteractionMessageTrigger>
     </i:Interaction.Triggers>
 
-    <!-- 親に縦だけAutoなScrollViewerがいるので、自前でScrollBarを出したいなら
-         ViewPortサイズからMargin削った分をサイズに設定する必要がある -->
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Auto"
-                  PanningMode="Both"
-                  Width="{Binding RelativeSource={RelativeSource AncestorType=ScrollViewer},
-                                  Path=ViewportWidth, Converter={StaticResource WidthConverter}}"
-                  Height="{Binding RelativeSource={RelativeSource AncestorType=ScrollViewer},
-                                   Path=ViewportHeight, Converter={StaticResource HeightConverter}}">
-        <Grid>
+                  PanningMode="Both">
+        <Grid Margin="8,4">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
@@ -80,7 +74,7 @@
                     <TextBlock Grid.Column="1"
                                Grid.Row="1"
                                Style="{DynamicResource DefaultTextStyleKey}">
-                        <Run Text="{Binding Data.Name, Mode=OneWay}"/>
+                        <Run Text="{Binding BattleName, Mode=OneWay}"/>
                         <Run Text=" "/>
                         <Run Text="{Binding BattleSituation, Mode=OneWay}"
                              FontSize="12"

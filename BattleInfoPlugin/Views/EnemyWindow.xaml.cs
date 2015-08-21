@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Grabacr07.KanColleViewer.Views;
 using MetroRadiance.Controls;
 
 namespace BattleInfoPlugin.Views
@@ -21,9 +20,8 @@ namespace BattleInfoPlugin.Views
         public EnemyWindow()
         {
             this.InitializeComponent();
-            this.InitializeComponent();
-            WeakEventManager<MainWindow, EventArgs>.AddHandler(
-                MainWindow.Current,
+            WeakEventManager<Window, EventArgs>.AddHandler(
+                Application.Current.MainWindow,
                 "Closed",
                 (_, __) => this.Close());
         }

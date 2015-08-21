@@ -60,6 +60,21 @@ namespace BattleInfoPlugin.Models
         }
         #endregion
 
+        #region Level変更通知プロパティ
+        private int _Level;
+        public int Level
+        {
+            get { return this._Level; }
+            set
+            {
+                if (this._Level == value)
+                    return;
+                this._Level = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        #endregion
+
         #region Situation変更通知プロパティ
         private ShipSituation _Situation;
 
@@ -225,52 +240,39 @@ namespace BattleInfoPlugin.Models
         }
         #endregion
 
-        public int SlotsFirepower { get { return this.Slots.Sum(x => x.Firepower); } }
-        public int SlotsTorpedo { get { return this.Slots.Sum(x => x.Torpedo); } }
-        public int SlotsAA { get { return this.Slots.Sum(x => x.AA); } }
-        public int SlotsArmer { get { return this.Slots.Sum(x => x.Armer); } }
-        public int SlotsASW { get { return this.Slots.Sum(x => x.ASW); } }
-        public int SlotsHit { get { return this.Slots.Sum(x => x.Hit); } }
-        public int SlotsEvade { get { return this.Slots.Sum(x => x.Evade); } }
+        public int SlotsFirepower => this.Slots.Sum(x => x.Firepower);
+        public int SlotsTorpedo => this.Slots.Sum(x => x.Torpedo);
+        public int SlotsAA => this.Slots.Sum(x => x.AA);
+        public int SlotsArmer => this.Slots.Sum(x => x.Armer);
+        public int SlotsASW => this.Slots.Sum(x => x.ASW);
+        public int SlotsHit => this.Slots.Sum(x => x.Hit);
+        public int SlotsEvade => this.Slots.Sum(x => x.Evade);
 
-        public int SumFirepower { get { return this.Firepower + this.SlotsFirepower; } }
-        public int SumTorpedo { get { return this.Torpedo + this.SlotsTorpedo; } }
-        public int SumAA { get { return this.AA + this.SlotsAA; } }
-        public int SumArmer { get { return this.Armer + this.SlotsArmer; } }
+        public int SumFirepower => 0 < this.Firepower ? this.Firepower + this.SlotsFirepower : this.Firepower;
+        public int SumTorpedo => 0 < this.Torpedo ? this.Torpedo + this.SlotsTorpedo : this.Torpedo;
+        public int SumAA => 0 < this.AA ? this.AA + this.SlotsAA : this.AA;
+        public int SumArmer => 0 < this.Armer ? this.Armer + this.SlotsArmer : this.Armer;
 
-        public LimitedValue HP
-        {
-            get { return new LimitedValue(this.NowHP, this.MaxHP, 0); }
-        }
+        public LimitedValue HP => new LimitedValue(this.NowHP, this.MaxHP, 0);
 
         public AttackType DayAttackType
-        {
-            get
-            {
-                return this.HasScout() && this.Count(Type2.主砲) == 2 && this.Count(Type2.徹甲弾) == 1 ? AttackType.カットイン主主
-                    : this.HasScout() && this.Count(Type2.主砲) == 1 && this.Count(Type2.副砲) == 1 && this.Count(Type2.徹甲弾) == 1 ? AttackType.カットイン主徹
-                    : this.HasScout() && this.Count(Type2.主砲) == 1 && this.Count(Type2.副砲) == 1 && this.Count(Type2.電探) == 1 ? AttackType.カットイン主電
-                    : this.HasScout() && this.Count(Type2.主砲) >= 1 && this.Count(Type2.副砲) >= 1 ? AttackType.カットイン主副
-                    : this.HasScout() && this.Count(Type2.主砲) >= 2 ? AttackType.連撃
-                    : AttackType.通常;
-            }
-        }
+            => this.HasScout() && this.Count(Type2.主砲) == 2 && this.Count(Type2.徹甲弾) == 1 ? AttackType.カットイン主主
+            : this.HasScout() && this.Count(Type2.主砲) == 1 && this.Count(Type2.副砲) == 1 && this.Count(Type2.徹甲弾) == 1 ? AttackType.カットイン主徹
+            : this.HasScout() && this.Count(Type2.主砲) == 1 && this.Count(Type2.副砲) == 1 && this.Count(Type2.電探) == 1 ? AttackType.カットイン主電
+            : this.HasScout() && this.Count(Type2.主砲) >= 1 && this.Count(Type2.副砲) >= 1 ? AttackType.カットイン主副
+            : this.HasScout() && this.Count(Type2.主砲) >= 2 ? AttackType.連撃
+            : AttackType.通常;
 
         public AttackType NightAttackType
-        {
-            get
-            {
-                return this.Count(Type2.魚雷) >= 2 ? AttackType.カットイン雷
-                    : this.Count(Type2.主砲) >= 3 ? AttackType.カットイン主主主
-                    : this.Count(Type2.主砲) == 2 && this.Count(Type2.副砲) >= 1 ? AttackType.カットイン主主副
-                    : this.Count(Type2.主砲) == 2 && this.Count(Type2.副砲) == 0 && this.Count(Type2.魚雷) == 1 ? AttackType.カットイン主雷
-                    : this.Count(Type2.主砲) == 1 && this.Count(Type2.魚雷) == 1 ? AttackType.カットイン主雷
-                    : this.Count(Type2.主砲) == 2 && this.Count(Type2.副砲) == 0 && this.Count(Type2.魚雷) == 0 ? AttackType.連撃
-                    : this.Count(Type2.主砲) == 1 && this.Count(Type2.副砲) >= 1 && this.Count(Type2.魚雷) == 0 ? AttackType.連撃
-                    : this.Count(Type2.主砲) == 0 && this.Count(Type2.副砲) >= 2 && this.Count(Type2.魚雷) <= 1 ? AttackType.連撃
-                    : AttackType.通常;
-            }
-        }
+            => this.Count(Type2.魚雷) >= 2 ? AttackType.カットイン雷
+            : this.Count(Type2.主砲) >= 3 ? AttackType.カットイン主主主
+            : this.Count(Type2.主砲) == 2 && this.Count(Type2.副砲) >= 1 ? AttackType.カットイン主主副
+            : this.Count(Type2.主砲) == 2 && this.Count(Type2.副砲) == 0 && this.Count(Type2.魚雷) == 1 ? AttackType.カットイン主雷
+            : this.Count(Type2.主砲) == 1 && this.Count(Type2.魚雷) == 1 ? AttackType.カットイン主雷
+            : this.Count(Type2.主砲) == 2 && this.Count(Type2.副砲) == 0 && this.Count(Type2.魚雷) == 0 ? AttackType.連撃
+            : this.Count(Type2.主砲) == 1 && this.Count(Type2.副砲) >= 1 && this.Count(Type2.魚雷) == 0 ? AttackType.連撃
+            : this.Count(Type2.主砲) == 0 && this.Count(Type2.副砲) >= 2 && this.Count(Type2.魚雷) <= 1 ? AttackType.連撃
+            : AttackType.通常;
 
         public ShipData()
         {
@@ -326,13 +328,15 @@ namespace BattleInfoPlugin.Models
 
         public MembersShipData(Ship ship) : this()
         {
-            this.Source = ship;
+            this._Source = ship;
+            this.UpdateFromSource();
         }
 
         private void UpdateFromSource()
         {
             this.Name = this.Source.Info.Name;
             this.TypeName = this.Source.Info.ShipType.Name;
+            this.Level = this.Source.Level;
             this.Situation = this.Source.Situation;
             this.NowHP = this.Source.HP.Current;
             this.MaxHP = this.Source.HP.Maximum;
@@ -377,7 +381,8 @@ namespace BattleInfoPlugin.Models
 
         public MastersShipData(ShipInfo info) : this()
         {
-            this.Source = info;
+            this._Source = info;
+            this.UpdateFromSource();
         }
 
         private void UpdateFromSource()
@@ -387,13 +392,6 @@ namespace BattleInfoPlugin.Models
             var m = Plugin.RawStart2.api_mst_ship.Single(x => x.api_id == this.Source.Id);
             this.AdditionalName = isEnemyID ? m.api_yomi : "";
             this.TypeName = this.Source.ShipType.Name;
-            this.NowHP = this.Source.HP;
-            this.MaxHP = this.Source.HP;
-            this.Firepower = this.Source.MaxFirepower;
-            this.Torpedo = this.Source.MaxTorpedo;
-            this.AA = this.Source.MaxAA;
-            this.Armer = this.Source.MaxArmer;
-            this.Luck = m.api_luck[0];
         }
     }
 }

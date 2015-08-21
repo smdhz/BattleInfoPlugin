@@ -17,17 +17,12 @@ namespace BattleInfoPlugin.ViewModels.Enemies
 {
     public class EnemyFleetViewModel : ViewModel
     {
-        public int Key { get; set; }
+        public string Key { get; set; }
 
         public string Name
-        {
-            get
-            {
-                return !string.IsNullOrWhiteSpace(this.Fleet.Name)
-                    ? this.Fleet.Name
-                    : "？？？";
-            }
-        }
+            => !string.IsNullOrWhiteSpace(this.Fleet.Name)
+                ? this.Fleet.Name
+                : "？？？";
 
         public FleetData Fleet { get; set; }
 

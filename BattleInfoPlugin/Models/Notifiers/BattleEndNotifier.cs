@@ -9,15 +9,17 @@ using Livet;
 
 namespace BattleInfoPlugin.Models.Notifiers
 {
-    public class BattleEndNotifier: NotificationObject
+    public class BattleEndNotifier : NotificationObject
     {
         private static readonly Settings settings = Settings.Default;
 
+        private readonly Plugin plugin;
+
         #region IsEnabled変更通知プロパティ
+
         public bool IsEnabled
         {
-            get
-            { return settings.IsEnabledBattleEndNotify; }
+            get { return settings.IsEnabledBattleEndNotify; }
             set
             {
                 if (settings.IsEnabledBattleEndNotify == value)
@@ -27,17 +29,20 @@ namespace BattleInfoPlugin.Models.Notifiers
                 this.RaisePropertyChanged();
             }
         }
+
         #endregion
 
 
-        public BattleEndNotifier()
+        public BattleEndNotifier(Plugin plugin)
         {
+            this.plugin = plugin;
+
             settings.Reload();
 
             var proxy = KanColleClient.Current.Proxy;
             proxy.api_req_combined_battle_battleresult
                 .Subscribe(_ => this.Notify());
-            proxy.ApiSessionSource.Where(x => x.PathAndQuery == "/kcsapi/api_req_practice/battle_result")
+            proxy.ApiSessionSource.Where(x => x.Request.PathAndQuery == "/kcsapi/api_req_practice/battle_result")
                 .Subscribe(_ => this.Notify());
             proxy.api_req_sortie_battleresult
                 .Subscribe(_ => this.Notify());
@@ -47,11 +52,19 @@ namespace BattleInfoPlugin.Models.Notifiers
         {
             var isActive = DispatcherHelper.UIDispatcher.Invoke(() => Application.Current.MainWindow.IsActive);
             if (this.IsEnabled && !isActive)
-                PluginHost.Instance.GetNotifier().Show(
-                    NotifyType.Other,
-                    "戦闘終了",
-                    "戦闘が終了しました。",
-                    () => App.ViewModelRoot.Activate());
+                this.plugin.InvokeNotifyRequested(new NotifyEventArgs(NotificationType.BattleEnd, "戦闘終了", "戦闘が終了しました。")
+                {
+                    Activated = () =>
+                    {
+                        DispatcherHelper.UIDispatcher.Invoke(() =>
+                        {
+                            var window = Application.Current.MainWindow;
+                            if (window.WindowState == WindowState.Minimized)
+                                window.WindowState = WindowState.Normal;
+                            window.Activate();
+                        });
+                    },
+                });
         }
     }
 }

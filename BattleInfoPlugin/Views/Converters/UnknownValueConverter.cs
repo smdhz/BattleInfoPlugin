@@ -8,12 +8,14 @@ using System.Windows.Data;
 
 namespace BattleInfoPlugin.Views.Converters
 {
-    public class BrTagToNewLineConverter : IValueConverter
+    public class UnknownValueConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var str = value as string;
-            return str?.Replace("<br>", Environment.NewLine) ?? "";
+            if (value is int && -1 < ((int) value))
+                return value;
+
+            return "？";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

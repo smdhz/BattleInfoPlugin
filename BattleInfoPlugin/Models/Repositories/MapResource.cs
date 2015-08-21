@@ -55,9 +55,8 @@ namespace BattleInfoPlugin.Models.Repositories
             public static BitmapSource GetMapImage(MapInfo map)
             {
                 var swf = map.ToSwf();
-                if (swf == null) return null;
 
-                return swf.Tags
+                return swf?.Tags
                     .SkipWhile(x => x.TagType != TagType.ShowFrame) //1フレーム飛ばす
                     .OfType<DefineBitsTag>()
                     .FirstOrDefault(x => x.TagType == TagType.DefineBitsJPEG3)
@@ -118,13 +117,15 @@ namespace BattleInfoPlugin.Models.Repositories
         public static Point FindPoint(this IEnumerable<PlaceObject2Tag> places, int num)
         {
             return places
-                .Single(p => p.Name == "line" + num)
+                .SingleOrDefault(p => p.Name == "line" + num)
                 .ToPoint();
         }
 
         public static Point ToPoint(this PlaceObject2Tag tag)
         {
-            return new Point(tag.Matrix.TranslateX / 20, tag.Matrix.TranslateY / 20);
+            return tag != null
+                ? new Point(tag.Matrix.TranslateX / 20, tag.Matrix.TranslateY / 20)
+                : default(Point);
         }
 
         public static BitmapFrame ToBitmapFrame(this DefineBitsTag tag)
